@@ -7,8 +7,12 @@ function testInterpreter(code: string, expectedValue: unknown) {
 
 describe('Interpreter', function () {
   describe('Math operations', function () {
-    it('should evaluate expression "3 + 2 * 5 ** 2"', () => {
+    it('should evaluate expression "3 + 2 * 5 ** 2" correctly', () => {
       testInterpreter('3 + 2 * 5 ** 2', 53);
+    });
+
+    it('should evaluate expression `"left" + " " + "right"` correctly', () => {
+      testInterpreter('"left" + " " + "right"', 'left right');
     });
   });
 });

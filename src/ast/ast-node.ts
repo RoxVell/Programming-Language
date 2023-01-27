@@ -17,6 +17,10 @@ export type NumberLiteralNode = AstNode<AstNodeType.NumberLiteral> & {
   value: number;
 };
 
+export type StringLiteralNode = AstNode<AstNodeType.StringLiteral> & {
+  value: string;
+};
+
 export type BooleanLiteralNode = AstNode<AstNodeType.BooleanLiteral> & {
   value: boolean;
 };
