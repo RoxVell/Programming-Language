@@ -171,4 +171,16 @@ describe('Lexer', function () {
       );
     });
   });
+
+  describe('Parenthesis', function () {
+    it('should parse parenthesis correctly', () => {
+      testLexer(
+        '()',
+        [
+          { type: TokenType.OpenParenthesis, value: '(' },
+          { type: TokenType.CloseParenthesis, value: ')' },
+        ]
+      );
+    });
+  });
 });

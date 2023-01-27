@@ -4,10 +4,7 @@ export enum AstNodeType {
   NumberLiteral = 'NumberLiteral',
   StringLiteral = 'StringLiteral',
   BooleanLiteral = 'BooleanLiteral',
-
   BinaryExpression = 'BinaryExpression',
-  // AdditiveExpression = 'AdditiveExpression',
-  // MultiplicativeExpression = 'MultiplicativeExpression',
 }
 
 export interface AstNode<T extends AstNodeType> {
@@ -33,6 +30,6 @@ export type BinaryExpression<O extends BinaryOperator> = AstNode<AstNodeType.Bin
 export type AdditiveExpression = BinaryExpression<AdditiveOperator>;
 export type MultiplicativeExpression = BinaryExpression<MultiplicativeOperator>;
 
-
-export type QAnyAstNode = BinaryExpression<BinaryOperator> | NumberLiteralNode;
-
+export interface AstTree {
+  statements: AnyAstNode[];
+}

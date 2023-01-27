@@ -1,24 +1,19 @@
 import { Lexer, LexerToken } from '../lexer/lexer';
 import { TOKENS } from '../lexer/tokens';
-import { AnyAstNode, AstNodeType, BinaryExpression, BooleanLiteralNode } from './ast-node';
+import { AnyAstNode, AstNodeType, AstTree, BinaryExpression, BooleanLiteralNode } from './ast-node';
 import { TokenType } from '../lexer/token-type';
-
-interface AstTree {
-  statements: AnyAstNode[];
-}
 
 export class Ast {
   private currentToken: LexerToken | null = null;
   private lexer!: Lexer;
 
-  constructor(
-    private readonly code: string,
-  ) {
+  constructor(private readonly code: string) {
   }
 
   parse(): AstTree {
     this.lexer = new Lexer(this.code, TOKENS);
     this.currentToken = this.lexer.getNextToken();
+
     return {
       statements: this.StatementsList()
     };
@@ -46,16 +41,6 @@ export class Ast {
     return this.BinaryExpression('PrimaryExpression', TokenType.OpExponentiation);
   }
 
-  private eat(tokenType: TokenType): LexerToken {
-    if (this.currentToken?.type === tokenType) {
-      const token = this.currentToken;
-      this.currentToken = this.lexer.getNextToken();
-      return token;
-    }
-
-    throw new Error(`Expected token "${tokenType}", but got "${this.currentToken!.type}"`);
-  }
-
   PrimaryExpression() {
     switch (this.currentToken?.type) {
       case TokenType.Boolean:
@@ -64,9 +49,28 @@ export class Ast {
         return this.NumberLiteral();
       case TokenType.String:
         return this.StringLiteral();
+      case TokenType.OpenParenthesis:
+        return this.ParenthesisExpression();
     }
 
     throw new Error(`Unexpected token found "${this.currentToken!.type}"`);
+  }
+
+  ParenthesisExpression() {
+    this.eat(TokenType.OpenParenthesis);
+    const expression = this.AdditiveExpression();
+    this.eat(TokenType.CloseParenthesis);
+    return expression;
+  }
+
+  private eat(tokenType: TokenType): LexerToken {
+    if (this.currentToken?.type === tokenType) {
+      const token = this.currentToken;
+      this.currentToken = this.lexer.getNextToken();
+      return token;
+    }
+
+    throw new Error(`Expected token "${tokenType}", but got "${this.currentToken!.type}"`);
   }
 
   StringLiteral() {
