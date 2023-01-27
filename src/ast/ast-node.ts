@@ -2,6 +2,7 @@ import { AdditiveOperator, BinaryOperator, MultiplicativeOperator } from './ast-
 
 export enum AstNodeType {
   NumberLiteral = 'NumberLiteral',
+  StringLiteral = 'StringLiteral',
   BooleanLiteral = 'BooleanLiteral',
 
   BinaryExpression = 'BinaryExpression',

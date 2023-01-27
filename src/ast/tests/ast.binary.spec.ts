@@ -115,6 +115,21 @@ describe('Binary Ast Expressions', function () {
       }
     });
   });
+
+  it('should parse expression `"left string" + "right string"` correctly', () => {
+    testAst(`"left string" + "right string"`, {
+      type: AstNodeType.BinaryExpression,
+      left: {
+        type: AstNodeType.StringLiteral,
+        value: 'left string'
+      },
+      operator: '+',
+      right: {
+        type: AstNodeType.StringLiteral,
+        value: 'right string'
+      }
+    });
+  });
 });
 
 // function itAstExpression(expression: string, ast: Record<string, unknown>) {

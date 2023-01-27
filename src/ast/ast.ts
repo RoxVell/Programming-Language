@@ -62,9 +62,20 @@ export class Ast {
         return this.BooleanLiteral();
       case TokenType.Number:
         return this.NumberLiteral();
+      case TokenType.String:
+        return this.StringLiteral();
     }
 
     throw new Error(`Unexpected token found "${this.currentToken!.type}"`);
+  }
+
+  StringLiteral() {
+    const token = this.eat(TokenType.String);
+
+    return {
+      type: AstNodeType.StringLiteral,
+      value: token.value.slice(1, -1),
+    };
   }
 
   NumberLiteral() {
@@ -73,7 +84,7 @@ export class Ast {
     return {
       type: AstNodeType.NumberLiteral,
       value: Number(token.value),
-    }
+    };
   }
 
   BooleanLiteral(): BooleanLiteralNode {

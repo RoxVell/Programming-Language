@@ -10,6 +10,15 @@ describe('Number Literal', function () {
   });
 });
 
+describe('String Literal', function () {
+  it('should parse a string literal', () => {
+    testAst('"some string"', {
+      type: AstNodeType.StringLiteral,
+      value: 'some string'
+    });
+  });
+});
+
 describe('Boolean Literal', function () {
   it('should parse true boolean literal', () => {
     testAst('true', {
