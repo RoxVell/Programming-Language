@@ -100,6 +100,21 @@ describe('Binary Ast Expressions', function () {
       }
     });
   });
+
+  it('should parse expression "true + false" correctly', () => {
+    testAst(`true + false`, {
+      type: AstNodeType.BinaryExpression,
+      left: {
+        type: AstNodeType.BooleanLiteral,
+        value: true
+      },
+      operator: '+',
+      right: {
+        type: AstNodeType.BooleanLiteral,
+        value: false
+      }
+    });
+  });
 });
 
 // function itAstExpression(expression: string, ast: Record<string, unknown>) {

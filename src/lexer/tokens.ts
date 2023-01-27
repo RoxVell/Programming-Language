@@ -16,5 +16,7 @@ export const TOKENS: TokenDictionary = [
   [/^'[^']*'/, TokenType.String],
   [/^"[^"]*"/, TokenType.String],
 
+  [/^(true|false)/, TokenType.Boolean],
+
   [/^\s+/, TokenType.Whitespaces, true],
 ];

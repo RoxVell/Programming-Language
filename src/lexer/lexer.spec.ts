@@ -51,6 +51,21 @@ describe('Lexer', function () {
     })
   });
 
+  describe('Boolean Tokens', function () {
+    it('should parse true boolean token', () => {
+      testLexer(
+        'true',
+        [{ type: TokenType.Boolean, value: 'true' }]
+      );
+    });
+
+    it('should parse false boolean token', () => {
+      testLexer(
+        'false', [{ type: TokenType.Boolean, value: 'false' }]
+      );
+    });
+  });
+
   describe('Binary Operators', function () {
     it('should parse binary plus operator with numbers on the sides', () => {
       const leftNumber = 5;
@@ -135,7 +150,6 @@ describe('Lexer', function () {
         ]
       );
     });
-
   });
 
   describe('Comments', function () {

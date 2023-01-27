@@ -1,6 +1,6 @@
 import { Lexer, LexerToken } from '../lexer/lexer';
 import { TOKENS } from '../lexer/tokens';
-import { AnyAstNode, AstNodeType, BinaryExpression } from './ast-node';
+import { AnyAstNode, AstNodeType, BinaryExpression, BooleanLiteralNode } from './ast-node';
 import { TokenType } from '../lexer/token-type';
 
 interface AstTree {
@@ -43,10 +43,10 @@ export class Ast {
   }
 
   ExponentialExpression() {
-    return this.BinaryExpression('NumberLiteral', TokenType.OpExponentiation);
+    return this.BinaryExpression('PrimaryExpression', TokenType.OpExponentiation);
   }
 
-  eat(tokenType: TokenType): LexerToken {
+  private eat(tokenType: TokenType): LexerToken {
     if (this.currentToken?.type === tokenType) {
       const token = this.currentToken;
       this.currentToken = this.lexer.getNextToken();
@@ -56,6 +56,17 @@ export class Ast {
     throw new Error(`Expected token "${tokenType}", but got "${this.currentToken!.type}"`);
   }
 
+  PrimaryExpression() {
+    switch (this.currentToken?.type) {
+      case TokenType.Boolean:
+        return this.BooleanLiteral();
+      case TokenType.Number:
+        return this.NumberLiteral();
+    }
+
+    throw new Error(`Unexpected token found "${this.currentToken!.type}"`);
+  }
+
   NumberLiteral() {
     const token = this.eat(TokenType.Number);
 
@@ -63,6 +74,15 @@ export class Ast {
       type: AstNodeType.NumberLiteral,
       value: Number(token.value),
     }
+  }
+
+  BooleanLiteral(): BooleanLiteralNode {
+    const token = this.eat(TokenType.Boolean);
+
+    return {
+      type: AstNodeType.BooleanLiteral,
+      value: token.value === 'true'
+    };
   }
 
   private BinaryExpression(node: string, tokenType: TokenType) {

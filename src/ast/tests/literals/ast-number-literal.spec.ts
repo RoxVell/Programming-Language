@@ -9,3 +9,19 @@ describe('Number Literal', function () {
     });
   });
 });
+
+describe('Boolean Literal', function () {
+  it('should parse true boolean literal', () => {
+    testAst('true', {
+      type: AstNodeType.BooleanLiteral,
+      value: true
+    });
+  });
+
+  it('should parse false boolean literal', () => {
+    testAst('false', {
+      type: AstNodeType.BooleanLiteral,
+      value: false
+    });
+  });
+});

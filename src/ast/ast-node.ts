@@ -2,6 +2,7 @@ import { AdditiveOperator, BinaryOperator, MultiplicativeOperator } from './ast-
 
 export enum AstNodeType {
   NumberLiteral = 'NumberLiteral',
+  BooleanLiteral = 'BooleanLiteral',
 
   BinaryExpression = 'BinaryExpression',
   // AdditiveExpression = 'AdditiveExpression',
@@ -16,6 +17,10 @@ export type AnyAstNode = AstNode<AstNodeType>;
 
 export type NumberLiteralNode = AstNode<AstNodeType.NumberLiteral> & {
   value: number;
+};
+
+export type BooleanLiteralNode = AstNode<AstNodeType.BooleanLiteral> & {
+  value: boolean;
 };
 
 export type BinaryExpression<O extends BinaryOperator> = AstNode<AstNodeType.BinaryExpression> & {
