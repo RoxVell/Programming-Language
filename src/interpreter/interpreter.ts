@@ -1,5 +1,12 @@
 import { Ast } from '../ast/ast';
-import { AnyAstNode, AstNodeType, BinaryExpression, NumberLiteralNode, StringLiteralNode } from '../ast/ast-node';
+import {
+  AnyAstNode,
+  AstNodeType,
+  BinaryExpression,
+  BooleanLiteralNode,
+  NumberLiteralNode,
+  StringLiteralNode
+} from '../ast/ast-node';
 import { BinaryOperator } from '../ast/ast-operators';
 
 export class Interpreter {
@@ -20,24 +27,15 @@ export class Interpreter {
   private evalNode(node: AnyAstNode): any {
     switch (node.type) {
       case AstNodeType.NumberLiteral:
-        return this.evalNumberLiteral(node as NumberLiteralNode);
+      case AstNodeType.StringLiteral:
+      case AstNodeType.BooleanLiteral:
+        return (node as NumberLiteralNode | StringLiteralNode | BooleanLiteralNode).value;
 
       case AstNodeType.BinaryExpression:
         return this.evaluateBinaryExpression(node as BinaryExpression<BinaryOperator>);
-
-      case AstNodeType.StringLiteral:
-        return this.evalStringLiteral(node as StringLiteralNode);
     }
 
     throw new Error(`Unexpected node type "${node.type}"`);
-  }
-
-  private evalNumberLiteral(node: NumberLiteralNode) {
-    return node.value;
-  }
-
-  private evalStringLiteral(node: StringLiteralNode): string {
-    return node.value;
   }
 
   private evaluateBinaryExpression(node: BinaryExpression<BinaryOperator>) {

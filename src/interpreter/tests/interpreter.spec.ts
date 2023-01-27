@@ -15,4 +15,14 @@ describe('Interpreter', function () {
       testInterpreter('"left" + " " + "right"', 'left right');
     });
   });
+
+  describe('Boolean Literals', function () {
+    it('should evaluate "true" boolean literal correctly', () => {
+      testInterpreter('true', true);
+    });
+
+    it('should evaluate "false" boolean literal correctly', () => {
+      testInterpreter('false', false);
+    });
+  });
 });
