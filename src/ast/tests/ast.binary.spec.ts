@@ -1,4 +1,4 @@
-import { testAst } from './ast-test-utils';
+import { itAstExpression, testAst } from './ast-test-utils';
 import { AstNodeType } from '../ast-node';
 
 describe('Binary Ast Expressions', function () {
@@ -130,10 +130,42 @@ describe('Binary Ast Expressions', function () {
       }
     });
   });
+
+  itAstExpression('2 > 1 < 3 >= 3 <= 4', {
+    type: AstNodeType.BinaryExpression,
+    left: {
+      type: AstNodeType.BinaryExpression,
+      left: {
+        type: AstNodeType.BinaryExpression,
+        left: {
+          type: AstNodeType.BinaryExpression,
+          left: {
+            type: AstNodeType.NumberLiteral,
+            value: 2
+          },
+          operator: '>',
+          right: {
+            type: AstNodeType.NumberLiteral,
+            value: 1
+          }
+        },
+        operator: '<',
+        right: {
+          type: AstNodeType.NumberLiteral,
+          value: 3
+        }
+      },
+      operator: '>=',
+      right: {
+        type: AstNodeType.NumberLiteral,
+        value: 3
+      }
+    },
+    operator: '<=',
+    right: {
+      type: AstNodeType.NumberLiteral,
+      value: 4
+    }
+  });
 });
 
-// function itAstExpression(expression: string, ast: Record<string, unknown>) {
-//   it(`should parse expression "${expression}" correctly`, () => {
-//     testAst(expression, ast);
-//   });
-// }

@@ -142,11 +142,67 @@ describe('Lexer', function () {
       const rightNumber = 228;
 
       testLexer(
-        `'${leftNumber}' ** '${rightNumber}'`,
+        `${leftNumber} ** ${rightNumber}`,
         [
-          { type: TokenType.String, value: `'${leftNumber}'` },
+          { type: TokenType.Number, value: `${leftNumber}` },
           { type: TokenType.OpExponentiation, value: `**` },
-          { type: TokenType.String, value: `'${rightNumber}'` },
+          { type: TokenType.Number, value: `${rightNumber}` },
+        ]
+      );
+    });
+
+    it('should parse binary greater than (>) operator', () => {
+      const leftNumber = 1337;
+      const rightNumber = 228;
+
+      testLexer(
+        `${leftNumber} > ${rightNumber}`,
+        [
+          { type: TokenType.Number, value: `${leftNumber}` },
+          { type: TokenType.OpComparison, value: `>` },
+          { type: TokenType.Number, value: `${rightNumber}` },
+        ]
+      );
+    });
+
+    it('should parse binary less than (<) operator', () => {
+      const leftNumber = 1337;
+      const rightNumber = 228;
+
+      testLexer(
+        `${leftNumber} < ${rightNumber}`,
+        [
+          { type: TokenType.Number, value: `${leftNumber}` },
+          { type: TokenType.OpComparison, value: `<` },
+          { type: TokenType.Number, value: `${rightNumber}` },
+        ]
+      );
+    });
+
+    it('should parse binary greater than or equal (>=) operator', () => {
+      const leftNumber = 1337;
+      const rightNumber = 228;
+
+      testLexer(
+        `${leftNumber} >= ${rightNumber}`,
+        [
+          { type: TokenType.Number, value: `${leftNumber}` },
+          { type: TokenType.OpComparison, value: `>=` },
+          { type: TokenType.Number, value: `${rightNumber}` },
+        ]
+      );
+    });
+
+    it('should parse binary greater than or equal (<=) operator', () => {
+      const leftNumber = 1337;
+      const rightNumber = 228;
+
+      testLexer(
+        `${leftNumber} <= ${rightNumber}`,
+        [
+          { type: TokenType.Number, value: `${leftNumber}` },
+          { type: TokenType.OpComparison, value: `<=` },
+          { type: TokenType.Number, value: `${rightNumber}` },
         ]
       );
     });

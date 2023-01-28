@@ -6,6 +6,7 @@ export enum TokenType {
   OpAdditive = 'OpAdditive',
   OpFactor = 'OpFactor',
   OpExponentiation = 'OpExponentiation',
+  OpComparison = 'OpComparison',
 
   OpenParenthesis = 'OpenParenthesis',
   CloseParenthesis = 'CloseParenthesis',

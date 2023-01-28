@@ -5,6 +5,10 @@ function testInterpreter(code: string, expectedValue: unknown) {
   expect(interpreter.evaluate(code)).toBe(expectedValue);
 }
 
+function testExpressionResult(code: string, result: any) {
+  it(`should evaluate expression "${code}" correctly`, () => testInterpreter(code, result));
+}
+
 describe('Interpreter', function () {
   describe('Math operations', function () {
     it('should evaluate expression "3 + 2 * 5 ** 2" correctly', () => {
@@ -24,5 +28,18 @@ describe('Interpreter', function () {
     it('should evaluate "false" boolean literal correctly', () => {
       testInterpreter('false', false);
     });
+  });
+
+  describe('Comparison Operators', () => {
+    testExpressionResult('1 < 2', true);
+    testExpressionResult('3 < 2', false);
+    testExpressionResult('2 > 1', true);
+    testExpressionResult('2 > 3', false);
+    testExpressionResult('1 <= 1', true);
+    testExpressionResult('1 <= 2', true);
+    testExpressionResult('1 <= 0', false);
+    testExpressionResult('1 >= 1', true);
+    testExpressionResult('1 >= 2', false);
+    testExpressionResult('1 >= 0', true);
   });
 });

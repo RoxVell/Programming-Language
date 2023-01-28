@@ -10,6 +10,7 @@ export const TOKENS: TokenDictionary = [
 
   [/^\*\*/, TokenType.OpExponentiation],
 
+  [/^([<>])=?/, TokenType.OpComparison],
   [/^(\+|-)/, TokenType.OpAdditive],
   [/^(\*|\/)/, TokenType.OpFactor],
 

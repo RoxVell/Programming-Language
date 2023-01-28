@@ -6,3 +6,9 @@ export function testAst(code: string, expectedAst: Record<string, unknown>) {
     statements: [expectedAst]
   });
 }
+
+export function itAstExpression(expression: string, ast: Record<string, unknown>) {
+  it(`should parse expression "${expression}" correctly`, () => {
+    testAst(expression, ast);
+  });
+}

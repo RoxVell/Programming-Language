@@ -40,7 +40,11 @@ export class Ast {
   }
 
   Expression() {
-    return this.AdditiveExpression();
+    return this.ComparisonExpression();
+  }
+
+  ComparisonExpression() {
+    return this.BinaryExpression('AdditiveExpression', TokenType.OpComparison);
   }
 
   AdditiveExpression() {
@@ -72,7 +76,7 @@ export class Ast {
 
   ParenthesisExpression() {
     this.eat(TokenType.OpenParenthesis);
-    const expression = this.AdditiveExpression();
+    const expression = this.Expression();
     this.eat(TokenType.CloseParenthesis);
     return expression;
   }
