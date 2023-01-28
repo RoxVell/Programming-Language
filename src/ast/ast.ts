@@ -1,6 +1,6 @@
 import { Lexer, LexerToken } from '../lexer/lexer';
 import { TOKENS } from '../lexer/tokens';
-import { AnyAstNode, AstNodeType, AstTree, BinaryExpression, BooleanLiteralNode } from './ast-node';
+import { AnyAstNode, AstNodeType, AstTree, BinaryExpression, BlockStatementNode, BooleanLiteralNode } from './ast-node';
 import { TokenType } from '../lexer/token-type';
 
 export class Ast {
@@ -19,14 +19,34 @@ export class Ast {
     };
   }
 
-  StatementsList(): AnyAstNode[] {
+  StatementsList(stopToken?: TokenType): AnyAstNode[] {
     const statements = [];
 
-    while (this.currentToken) {
-      statements.push(this.ExpressionStatement())
+    while (this.currentToken && this.currentToken.type !== stopToken) {
+      statements.push(this.Statement());
     }
 
     return statements;
+  }
+
+  Statement() {
+    switch (this.currentToken?.type) {
+      case TokenType.OpenBracket:
+        return this.BlockStatement();
+    }
+
+    return this.ExpressionStatement();
+  }
+
+  BlockStatement(): BlockStatementNode {
+    this.eat(TokenType.OpenBracket);
+    const statements = this.StatementsList(TokenType.CloseBracket);
+    this.eat(TokenType.CloseBracket);
+
+    return {
+      type: AstNodeType.BlockStatement,
+      statements
+    };
   }
 
   ExpressionStatement() {

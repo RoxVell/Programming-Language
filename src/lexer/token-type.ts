@@ -11,6 +11,9 @@ export enum TokenType {
   OpenParenthesis = 'OpenParenthesis',
   CloseParenthesis = 'CloseParenthesis',
 
+  OpenBracket = 'OpenBracket',
+  CloseBracket = 'CloseBracket',
+
   Semicolon = 'Semicolon',
 
   Whitespaces = 'Whitespaces',

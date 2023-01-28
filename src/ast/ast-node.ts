@@ -5,6 +5,7 @@ export enum AstNodeType {
   StringLiteral = 'StringLiteral',
   BooleanLiteral = 'BooleanLiteral',
   BinaryExpression = 'BinaryExpression',
+  BlockStatement = 'BlockStatement',
 }
 
 export interface AstNode<T extends AstNodeType> {
@@ -12,6 +13,10 @@ export interface AstNode<T extends AstNodeType> {
 }
 
 export type AnyAstNode = AstNode<AstNodeType>;
+
+export type BlockStatementNode = AstNode<AstNodeType.BlockStatement> & {
+  statements: AnyAstNode[];
+};
 
 export type NumberLiteralNode = AstNode<AstNodeType.NumberLiteral> & {
   value: number;

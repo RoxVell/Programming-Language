@@ -239,4 +239,16 @@ describe('Lexer', function () {
       );
     });
   });
+
+  describe('Brackets', () => {
+    it('should parse brackets correctly', () => {
+      testLexer(
+        '{}',
+        [
+          { type: TokenType.OpenBracket, value: '{' },
+          { type: TokenType.CloseBracket, value: '}' },
+        ]
+      );
+    });
+  });
 });
