@@ -23,10 +23,24 @@ export class Ast {
     const statements = [];
 
     while (this.currentToken) {
-      statements.push(this.AdditiveExpression())
+      statements.push(this.ExpressionStatement())
     }
 
     return statements;
+  }
+
+  ExpressionStatement() {
+    const expression = this.Expression();
+
+    if (this.currentToken?.type === TokenType.Semicolon) {
+      this.eat(TokenType.Semicolon);
+    }
+
+    return expression;
+  }
+
+  Expression() {
+    return this.AdditiveExpression();
   }
 
   AdditiveExpression() {

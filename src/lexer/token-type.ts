@@ -10,6 +10,8 @@ export enum TokenType {
   OpenParenthesis = 'OpenParenthesis',
   CloseParenthesis = 'CloseParenthesis',
 
+  Semicolon = 'Semicolon',
+
   Whitespaces = 'Whitespaces',
   Comment = 'Comment'
 }

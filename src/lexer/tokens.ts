@@ -21,5 +21,7 @@ export const TOKENS: TokenDictionary = [
   [/^\(/, TokenType.OpenParenthesis],
   [/^\)/, TokenType.CloseParenthesis],
 
+  [/^;/, TokenType.Semicolon],
+
   [/^\s+/, TokenType.Whitespaces, true],
 ];
