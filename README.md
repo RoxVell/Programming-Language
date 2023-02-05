@@ -246,14 +246,14 @@
       <td><a href="/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND">Logical AND (&amp;&amp;)</a></td>
       <td>left-to-right</td>
       <td><code>… &amp;&amp; …</code></td>
-      <td>❌</td>
+      <td>✅</td>
     </tr>
     <tr>
       <td rowspan="2">4</td>
       <td><a href="/en-US/docs/Web/JavaScript/Reference/Operators/Logical_OR">Logical OR (||)</a></td>
       <td>left-to-right</td>
       <td><code>… || …</code></td>
-      <td>❌</td>
+      <td>✅</td>
     </tr>
     <tr>
       <td><a href="/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator">Nullish coalescing operator (??)</a></td>
