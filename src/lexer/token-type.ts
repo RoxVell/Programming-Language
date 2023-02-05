@@ -17,5 +17,8 @@ export enum TokenType {
   Semicolon = 'Semicolon',
 
   Whitespaces = 'Whitespaces',
-  Comment = 'Comment'
+  Comment = 'Comment',
+  // Keywords
+  IfKeyword = 'IfKeyword',
+  ElseKeyword = 'ElseKeyword',
 }

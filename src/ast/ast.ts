@@ -1,14 +1,21 @@
-import { Lexer, LexerToken } from '../lexer/lexer';
-import { TOKENS } from '../lexer/tokens';
-import { AnyAstNode, AstNodeType, AstTree, BinaryExpression, BlockStatementNode, BooleanLiteralNode } from './ast-node';
-import { TokenType } from '../lexer/token-type';
+import {Lexer, LexerToken} from '../lexer/lexer';
+import {TOKENS} from '../lexer/tokens';
+import {
+  AstNode,
+  AstNodeType,
+  AstTree,
+  BinaryExpression,
+  BlockStatementNode,
+  BooleanLiteralNode,
+  IfStatementNode
+} from './ast-node';
+import {TokenType} from '../lexer/token-type';
 
 export class Ast {
   private currentToken: LexerToken | null = null;
   private lexer!: Lexer;
 
-  constructor(private readonly code: string) {
-  }
+  constructor(private readonly code: string) {}
 
   parse(): AstTree {
     this.lexer = new Lexer(this.code, TOKENS);
@@ -19,7 +26,7 @@ export class Ast {
     };
   }
 
-  StatementsList(stopToken?: TokenType): AnyAstNode[] {
+  StatementsList(stopToken?: TokenType): AstNode[] {
     const statements = [];
 
     while (this.currentToken && this.currentToken.type !== stopToken) {
@@ -33,6 +40,8 @@ export class Ast {
     switch (this.currentToken?.type) {
       case TokenType.OpenBracket:
         return this.BlockStatement();
+      case TokenType.IfKeyword:
+        return this.IfStatement();
     }
 
     return this.ExpressionStatement();
@@ -71,7 +80,7 @@ export class Ast {
     return this.BinaryExpression('MultiplicativeExpression', TokenType.OpAdditive);
   }
 
-  MultiplicativeExpression(): AnyAstNode {
+  MultiplicativeExpression(): AstNode {
     return this.BinaryExpression('ExponentialExpression', TokenType.OpFactor);
   }
 
@@ -140,7 +149,7 @@ export class Ast {
 
   private BinaryExpression(node: string, tokenType: TokenType) {
     // @ts-ignore
-    let left: AnyAstNode = this[node]();
+    let left: AstNode = this[node]();
 
     while (this.currentToken?.type === tokenType) {
       const operatorToken = this.eat(tokenType);
@@ -156,5 +165,32 @@ export class Ast {
     }
 
     return left;
+  }
+
+  private InsideParentheses() {
+    this.eat(TokenType.OpenParenthesis);
+    const expression = this.Expression();
+    this.eat(TokenType.CloseParenthesis);
+    return expression;
+  }
+
+  private IfStatement(): IfStatementNode {
+    this.eat(TokenType.IfKeyword);
+    const condition = this.InsideParentheses();
+    const thenStatement = this.Statement();
+
+    let elseStatement = null;
+
+    if (this.currentToken?.type === TokenType.ElseKeyword) {
+      this.eat(TokenType.ElseKeyword);
+      elseStatement = this.Statement();
+    }
+
+    return {
+      type: AstNodeType.IfStatement,
+      condition,
+      then: thenStatement,
+      else: elseStatement
+    };
   }
 }

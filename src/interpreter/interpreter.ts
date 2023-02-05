@@ -1,13 +1,13 @@
-import { Ast } from '../ast/ast';
+import {Ast} from '../ast/ast';
 import {
-  AnyAstNode,
+  AstNode,
   AstNodeType,
   BinaryExpression,
-  BooleanLiteralNode,
+  BooleanLiteralNode, IfStatementNode,
   NumberLiteralNode,
   StringLiteralNode
 } from '../ast/ast-node';
-import { BinaryOperator } from '../ast/ast-operators';
+import {BinaryOperator} from '../ast/ast-operators';
 
 export class Interpreter {
   constructor() {
@@ -24,12 +24,15 @@ export class Interpreter {
     return this.evalNode(ast.statements[ast.statements.length - 1]);
   }
 
-  private evalNode(node: AnyAstNode): any {
+  private evalNode(node: AstNode): any {
     switch (node.type) {
       case AstNodeType.NumberLiteral:
       case AstNodeType.StringLiteral:
       case AstNodeType.BooleanLiteral:
         return (node as NumberLiteralNode | StringLiteralNode | BooleanLiteralNode).value;
+
+      case AstNodeType.IfStatement:
+        return this.evalIfStatement(node as IfStatementNode);
 
       case AstNodeType.BinaryExpression:
         return this.evaluateBinaryExpression(node as BinaryExpression<BinaryOperator>);
@@ -61,6 +64,14 @@ export class Interpreter {
         return left >= right;
       case '<=':
         return left <= right;
+    }
+  }
+
+  private evalIfStatement(node: IfStatementNode) {
+    if (this.evalNode(node.condition)) {
+      this.evalNode(node.then);
+    } else if (node.else) {
+      this.evalNode(node.else);
     }
   }
 }

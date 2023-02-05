@@ -6,33 +6,41 @@ export enum AstNodeType {
   BooleanLiteral = 'BooleanLiteral',
   BinaryExpression = 'BinaryExpression',
   BlockStatement = 'BlockStatement',
+  IfStatement = 'IfStatement'
 }
 
-export interface AstNode<T extends AstNodeType> {
+export interface AstNodeBuilder<T extends AstNodeType> {
   type: T;
 }
 
-export type AnyAstNode = AstNode<AstNodeType>;
+export type AstNode = AstNodeBuilder<AstNodeType>;
 
-export type BlockStatementNode = AstNode<AstNodeType.BlockStatement> & {
-  statements: AnyAstNode[];
+export interface IfStatementNode {
+  type: AstNodeType.IfStatement,
+  condition: AstNode;
+  then: AstNode;
+  else: AstNode | null;
+}
+
+export type BlockStatementNode = AstNodeBuilder<AstNodeType.BlockStatement> & {
+  statements: AstNode[];
 };
 
-export type NumberLiteralNode = AstNode<AstNodeType.NumberLiteral> & {
+export type NumberLiteralNode = AstNodeBuilder<AstNodeType.NumberLiteral> & {
   value: number;
 };
 
-export type StringLiteralNode = AstNode<AstNodeType.StringLiteral> & {
+export type StringLiteralNode = AstNodeBuilder<AstNodeType.StringLiteral> & {
   value: string;
 };
 
-export type BooleanLiteralNode = AstNode<AstNodeType.BooleanLiteral> & {
+export type BooleanLiteralNode = AstNodeBuilder<AstNodeType.BooleanLiteral> & {
   value: boolean;
 };
 
-export type BinaryExpression<O extends BinaryOperator> = AstNode<AstNodeType.BinaryExpression> & {
-  left: AnyAstNode;
-  right: AnyAstNode;
+export type BinaryExpression<O extends BinaryOperator> = AstNodeBuilder<AstNodeType.BinaryExpression> & {
+  left: AstNode;
+  right: AstNode;
   operator: O;
 }
 
@@ -40,5 +48,5 @@ export type AdditiveExpression = BinaryExpression<AdditiveOperator>;
 export type MultiplicativeExpression = BinaryExpression<MultiplicativeOperator>;
 
 export interface AstTree {
-  statements: AnyAstNode[];
+  statements: AstNode[];
 }
