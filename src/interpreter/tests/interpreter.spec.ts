@@ -18,6 +18,10 @@ describe('Interpreter', function () {
     it('should evaluate expression `"left" + " " + "right"` correctly', () => {
       testInterpreter('"left" + " " + "right"', 'left right');
     });
+
+    it('should evaluate expression `5 * 5 / 5 % 2` correctly', () => {
+      testInterpreter('5 * 5 / 5 % 2', 1);
+    });
   });
 
   describe('Boolean Literals', function () {

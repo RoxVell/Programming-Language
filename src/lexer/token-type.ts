@@ -9,6 +9,7 @@ export enum TokenType {
   OpComparison = 'OpComparison',
   OpLogicalAnd = 'OpLogicalAnd',
   OpLogicalOr = 'OpLogicalOr',
+  OpRemainder = 'OpRemainder',
 
   OpenParenthesis = 'OpenParenthesis',
   CloseParenthesis = 'CloseParenthesis',

@@ -73,27 +73,27 @@ export class Ast {
   }
 
   LogicalOrExpression() {
-    return this.BinaryExpression('LogicalAndExpression', TokenType.OpLogicalOr);
+    return this.BinaryExpression('LogicalAndExpression', [TokenType.OpLogicalOr]);
   }
 
   LogicalAndExpression() {
-    return this.BinaryExpression('ComparisonExpression', TokenType.OpLogicalAnd);
+    return this.BinaryExpression('ComparisonExpression', [TokenType.OpLogicalAnd]);
   }
 
   ComparisonExpression() {
-    return this.BinaryExpression('AdditiveExpression', TokenType.OpComparison);
+    return this.BinaryExpression('AdditiveExpression', [TokenType.OpComparison]);
   }
 
   AdditiveExpression() {
-    return this.BinaryExpression('MultiplicativeExpression', TokenType.OpAdditive);
+    return this.BinaryExpression('MultiplicativeExpression', [TokenType.OpAdditive]);
   }
 
   MultiplicativeExpression(): AstNode {
-    return this.BinaryExpression('ExponentialExpression', TokenType.OpFactor);
+    return this.BinaryExpression('ExponentialExpression', [TokenType.OpFactor, TokenType.OpRemainder]);
   }
 
   ExponentialExpression() {
-    return this.BinaryExpression('PrimaryExpression', TokenType.OpExponentiation);
+    return this.BinaryExpression('PrimaryExpression', [TokenType.OpExponentiation]);
   }
 
   PrimaryExpression() {
@@ -155,11 +155,13 @@ export class Ast {
     };
   }
 
-  private BinaryExpression(node: string, tokenType: TokenType) {
+  private BinaryExpression(node: string, tokenTypes: TokenType[]) {
     // @ts-ignore
     let left: AstNode = this[node]();
 
-    while (this.currentToken?.type === tokenType) {
+    let tokenType;
+
+    while (this.currentToken && (tokenType = tokenTypes.find(tokenType => tokenType === this.currentToken!.type))) {
       const operatorToken = this.eat(tokenType);
       // @ts-ignore
       const right = this[node]();

@@ -135,7 +135,7 @@
     <tr>
       <td><a href="/en-US/docs/Web/JavaScript/Reference/Operators/Remainder">Remainder (%)</a></td>
       <td><code>… % …</code></td>
-      <td>❌</td>
+      <td>✅</td>
     </tr>
     <tr>
       <td rowspan="2">12</td>

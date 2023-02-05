@@ -188,5 +188,34 @@ describe('Binary Ast Expressions', function () {
       }
     }
   });
+
+  itAstExpression('5 * 5 / 5 % 2', {
+    type: AstNodeType.BinaryExpression,
+    left: {
+      type: AstNodeType.BinaryExpression,
+      left: {
+        type: AstNodeType.BinaryExpression,
+        left: {
+          type: AstNodeType.NumberLiteral,
+          value: 5
+        },
+        operator: '*',
+        right: {
+          type: AstNodeType.NumberLiteral,
+          value: 5
+        }
+      },
+      operator: '/',
+      right: {
+        type: AstNodeType.NumberLiteral,
+        value: 5
+      }
+    },
+    operator: '%',
+    right: {
+      type: AstNodeType.NumberLiteral,
+      value: 2
+    }
+  });
 });
 

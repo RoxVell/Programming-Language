@@ -122,6 +122,20 @@ describe('Lexer', function () {
       );
     });
 
+    it('should parse binary division operator with numbers on the sides', () => {
+      const leftNumber = 1337;
+      const rightNumber = 228;
+
+      testLexer(
+        `${leftNumber} % ${rightNumber}`,
+        [
+          { type: TokenType.Number, value: `${leftNumber}` },
+          { type: TokenType.OpRemainder, value: `%` },
+          { type: TokenType.Number, value: `${rightNumber}` },
+        ]
+      );
+    });
+
     it('should parse binary plus operator with string on the sides', () => {
       const leftString = 'a';
       const rightString = 'b';

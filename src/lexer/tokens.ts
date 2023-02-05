@@ -15,6 +15,7 @@ export const TOKENS: TokenDictionary = [
   [/^(\*|\/)/, TokenType.OpFactor],
   [/^&&/, TokenType.OpLogicalAnd],
   [/^\|\|/, TokenType.OpLogicalOr],
+  [/^%/, TokenType.OpRemainder],
 
   [/^'[^']*'/, TokenType.String],
   [/^"[^"]*"/, TokenType.String],
