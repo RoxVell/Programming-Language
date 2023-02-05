@@ -167,5 +167,26 @@ describe('Binary Ast Expressions', function () {
       value: 4
     }
   });
+
+  itAstExpression('true || false && true', {
+    type: AstNodeType.BinaryExpression,
+    left: {
+      type: AstNodeType.BooleanLiteral,
+      value: true,
+    },
+    operator: '||',
+    right: {
+      type: AstNodeType.BinaryExpression,
+      left: {
+        type: AstNodeType.BooleanLiteral,
+        value: false,
+      },
+      operator: '&&',
+      right: {
+        type: AstNodeType.BooleanLiteral,
+        value: true
+      }
+    }
+  });
 });
 

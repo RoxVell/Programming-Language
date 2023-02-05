@@ -19,7 +19,6 @@ function testLexer(code: string, tokens: LexerToken[]) {
   expect(resultTokens).toEqual(tokens);
 }
 
-
 describe('Lexer', function () {
   describe('Number Tokens', function () {
     it('should parse single number token', () => {
@@ -202,6 +201,34 @@ describe('Lexer', function () {
         [
           { type: TokenType.Number, value: `${leftNumber}` },
           { type: TokenType.OpComparison, value: `<=` },
+          { type: TokenType.Number, value: `${rightNumber}` },
+        ]
+      );
+    });
+
+    it('should parse binary logical or (||) operator', () => {
+      const leftNumber = 1337;
+      const rightNumber = 228;
+
+      testLexer(
+        `${leftNumber} || ${rightNumber}`,
+        [
+          { type: TokenType.Number, value: `${leftNumber}` },
+          { type: TokenType.OpLogicalOr, value: `||` },
+          { type: TokenType.Number, value: `${rightNumber}` },
+        ]
+      );
+    });
+
+    it('should parse binary logical and (&&) operator', () => {
+      const leftNumber = 1337;
+      const rightNumber = 228;
+
+      testLexer(
+        `${leftNumber} && ${rightNumber}`,
+        [
+          { type: TokenType.Number, value: `${leftNumber}` },
+          { type: TokenType.OpLogicalAnd, value: `&&` },
           { type: TokenType.Number, value: `${rightNumber}` },
         ]
       );

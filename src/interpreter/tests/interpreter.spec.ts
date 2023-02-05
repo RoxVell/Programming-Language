@@ -42,4 +42,15 @@ describe('Interpreter', function () {
     testExpressionResult('1 >= 2', false);
     testExpressionResult('1 >= 0', true);
   });
+
+  describe('Logical Operators', () => {
+    testExpressionResult('true && false', false);
+    testExpressionResult('true && true', true);
+    testExpressionResult('false && false', false);
+    testExpressionResult('false || true', true);
+    testExpressionResult('false || false', false);
+    testExpressionResult('true || true', true);
+    testExpressionResult('true || true && false', true);
+    testExpressionResult('false || true && false', false);
+  });
 });

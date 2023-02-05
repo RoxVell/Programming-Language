@@ -69,7 +69,15 @@ export class Ast {
   }
 
   Expression() {
-    return this.ComparisonExpression();
+    return this.LogicalOrExpression();
+  }
+
+  LogicalOrExpression() {
+    return this.BinaryExpression('LogicalAndExpression', TokenType.OpLogicalOr);
+  }
+
+  LogicalAndExpression() {
+    return this.BinaryExpression('ComparisonExpression', TokenType.OpLogicalAnd);
   }
 
   ComparisonExpression() {

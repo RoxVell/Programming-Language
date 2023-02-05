@@ -13,6 +13,8 @@ export const TOKENS: TokenDictionary = [
   [/^([<>])=?/, TokenType.OpComparison],
   [/^(\+|-)/, TokenType.OpAdditive],
   [/^(\*|\/)/, TokenType.OpFactor],
+  [/^&&/, TokenType.OpLogicalAnd],
+  [/^\|\|/, TokenType.OpLogicalOr],
 
   [/^'[^']*'/, TokenType.String],
   [/^"[^"]*"/, TokenType.String],
