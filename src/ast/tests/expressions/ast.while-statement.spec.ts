@@ -14,3 +14,17 @@ describe('While Statement', () => {
     }
   });
 });
+
+describe('Do While Statement', () => {
+  itAstExpression('do {} while (true)', {
+    type: AstNodeType.DoWhileStatement,
+    condition: {
+      type: AstNodeType.BooleanLiteral,
+      value: true,
+    },
+    body: {
+      type: AstNodeType.BlockStatement,
+      statements: []
+    }
+  });
+});

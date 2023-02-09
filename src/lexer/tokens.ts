@@ -11,8 +11,8 @@ export const TOKENS: TokenDictionary = [
   [/^\*\*/, TokenType.OpExponentiation],
 
   [/^([<>])=?/, TokenType.OpComparison],
-  [/^(\+|-)/, TokenType.OpAdditive],
-  [/^(\*|\/)/, TokenType.OpFactor],
+  [/^([+\-])/, TokenType.OpAdditive],
+  [/^([*\/])/, TokenType.OpFactor],
   [/^&&/, TokenType.OpLogicalAnd],
   [/^\|\|/, TokenType.OpLogicalOr],
   [/^%/, TokenType.OpRemainder],
@@ -35,4 +35,5 @@ export const TOKENS: TokenDictionary = [
   [/^if/, TokenType.IfKeyword],
   [/^else/, TokenType.ElseKeyword],
   [/^while/, TokenType.WhileKeyword],
+  [/^do/, TokenType.DoKeyword],
 ];

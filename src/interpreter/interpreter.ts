@@ -3,9 +3,12 @@ import {
   AstNode,
   AstNodeType,
   BinaryExpression,
-  BooleanLiteralNode, IfStatementNode,
+  BlockStatementNode,
+  BooleanLiteralNode, DoWhileStatementNode,
+  IfStatementNode,
   NumberLiteralNode,
-  StringLiteralNode
+  StringLiteralNode,
+  WhileStatementNode
 } from '../ast/ast-node';
 import {BinaryOperator} from '../ast/ast-operators';
 
@@ -36,9 +39,37 @@ export class Interpreter {
 
       case AstNodeType.BinaryExpression:
         return this.evaluateBinaryExpression(node as BinaryExpression<BinaryOperator>);
+
+      case AstNodeType.WhileStatement:
+        this.whileStatement(node as WhileStatementNode);
+        break;
+
+      case AstNodeType.DoWhileStatement:
+        this.doWhileStatement(node as DoWhileStatementNode);
+        break;
+
+      case AstNodeType.BlockStatement:
+        this.blockStatement(node as BlockStatementNode);
+        break;
     }
 
     throw new Error(`Unexpected node type "${node.type}"`);
+  }
+
+  private doWhileStatement(node: DoWhileStatementNode): void {
+    do {
+      this.evalNode(node.body);
+    } while (this.evalNode(node.condition))
+  }
+
+  private blockStatement(node: BlockStatementNode): void {
+    node.statements.forEach(statement => this.evalNode(statement));
+  }
+
+  private whileStatement(node: WhileStatementNode): void {
+    while (this.evalNode(node.condition)) {
+      this.evalNode(node.body);
+    }
   }
 
   private evaluateBinaryExpression(node: BinaryExpression<BinaryOperator>) {

@@ -8,6 +8,7 @@ export enum AstNodeType {
   BlockStatement = 'BlockStatement',
   IfStatement = 'IfStatement',
   WhileStatement = 'WhileStatement',
+  DoWhileStatement = 'DoWhileStatement',
 }
 
 export interface AstNodeBuilder<T extends AstNodeType> {
@@ -25,6 +26,12 @@ export interface IfStatementNode {
 
 export interface WhileStatementNode {
   type: AstNodeType.WhileStatement,
+  condition: AstNode;
+  body: AstNode;
+}
+
+export interface DoWhileStatementNode {
+  type: AstNodeType.DoWhileStatement,
   condition: AstNode;
   body: AstNode;
 }

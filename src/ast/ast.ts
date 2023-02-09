@@ -7,6 +7,7 @@ import {
   BinaryExpression,
   BlockStatementNode,
   BooleanLiteralNode,
+  DoWhileStatementNode,
   IfStatementNode,
   WhileStatementNode
 } from './ast-node';
@@ -45,9 +46,23 @@ export class Ast {
         return this.IfStatement();
       case TokenType.WhileKeyword:
         return this.WhileStatement();
+      case TokenType.DoKeyword:
+        return this.DoWhileStatement();
     }
 
     return this.ExpressionStatement();
+  }
+
+  DoWhileStatement(): DoWhileStatementNode {
+    this.eat(TokenType.DoKeyword);
+    const body = this.Statement();
+    this.eat(TokenType.WhileKeyword);
+    const condition = this.InsideParentheses();
+    return {
+      type: AstNodeType.DoWhileStatement,
+      condition,
+      body
+    };
   }
 
   WhileStatement(): WhileStatementNode {
