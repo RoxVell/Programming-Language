@@ -7,7 +7,8 @@ import {
   BinaryExpression,
   BlockStatementNode,
   BooleanLiteralNode,
-  IfStatementNode
+  IfStatementNode,
+  WhileStatementNode
 } from './ast-node';
 import {TokenType} from '../lexer/token-type';
 
@@ -42,9 +43,22 @@ export class Ast {
         return this.BlockStatement();
       case TokenType.IfKeyword:
         return this.IfStatement();
+      case TokenType.WhileKeyword:
+        return this.WhileStatement();
     }
 
     return this.ExpressionStatement();
+  }
+
+  WhileStatement(): WhileStatementNode {
+    this.eat(TokenType.WhileKeyword);
+    const condition = this.InsideParentheses();
+    const body = this.Statement();
+    return {
+      type: AstNodeType.WhileStatement,
+      condition,
+      body
+    };
   }
 
   BlockStatement(): BlockStatementNode {

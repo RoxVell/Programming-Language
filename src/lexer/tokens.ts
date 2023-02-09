@@ -34,4 +34,5 @@ export const TOKENS: TokenDictionary = [
 
   [/^if/, TokenType.IfKeyword],
   [/^else/, TokenType.ElseKeyword],
+  [/^while/, TokenType.WhileKeyword],
 ];

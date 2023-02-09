@@ -6,7 +6,8 @@ export enum AstNodeType {
   BooleanLiteral = 'BooleanLiteral',
   BinaryExpression = 'BinaryExpression',
   BlockStatement = 'BlockStatement',
-  IfStatement = 'IfStatement'
+  IfStatement = 'IfStatement',
+  WhileStatement = 'WhileStatement',
 }
 
 export interface AstNodeBuilder<T extends AstNodeType> {
@@ -20,6 +21,12 @@ export interface IfStatementNode {
   condition: AstNode;
   then: AstNode;
   else: AstNode | null;
+}
+
+export interface WhileStatementNode {
+  type: AstNodeType.WhileStatement,
+  condition: AstNode;
+  body: AstNode;
 }
 
 export type BlockStatementNode = AstNodeBuilder<AstNodeType.BlockStatement> & {

@@ -24,4 +24,5 @@ export enum TokenType {
   // Keywords
   IfKeyword = 'IfKeyword',
   ElseKeyword = 'ElseKeyword',
+  WhileKeyword = 'WhileKeyword',
 }
