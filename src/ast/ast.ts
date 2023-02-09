@@ -1,5 +1,5 @@
-import {Lexer, LexerToken} from '../lexer/lexer';
-import {TOKENS} from '../lexer/tokens';
+import { Lexer, LexerToken } from '../lexer/lexer';
+import { TOKENS } from '../lexer/tokens';
 import {
   AstNode,
   AstNodeType,
@@ -8,10 +8,12 @@ import {
   BlockStatementNode,
   BooleanLiteralNode,
   DoWhileStatementNode,
+  IdentifierNode,
   IfStatementNode,
+  VariableDeclarationNode,
   WhileStatementNode
 } from './ast-node';
-import {TokenType} from '../lexer/token-type';
+import { TokenType } from '../lexer/token-type';
 
 export class Ast {
   private currentToken: LexerToken | null = null;
@@ -48,9 +50,36 @@ export class Ast {
         return this.WhileStatement();
       case TokenType.DoKeyword:
         return this.DoWhileStatement();
+      case TokenType.LetKeyword:
+      case TokenType.ConstKeyword:
+        return this.VariableDeclaration();
     }
 
     return this.ExpressionStatement();
+  }
+
+  VariableDeclaration(): VariableDeclarationNode {
+    const variableKind = this.eatSome([TokenType.LetKeyword, TokenType.ConstKeyword]);
+    const id = this.Identifier();
+    this.eat(TokenType.Equal);
+    const init = this.Expression();
+    this.eat(TokenType.Semicolon);
+
+    return {
+      type: AstNodeType.VariableDeclaration,
+      id: id,
+      kind: variableKind.value as VariableDeclarationNode['kind'],
+      init: init
+    };
+  }
+
+  Identifier(): IdentifierNode {
+    const id = this.eat(TokenType.Identifier);
+
+    return {
+      type: AstNodeType.Identifier,
+      name: id.value
+    };
   }
 
   DoWhileStatement(): DoWhileStatementNode {
@@ -148,13 +177,33 @@ export class Ast {
   }
 
   private eat(tokenType: TokenType): LexerToken {
+    const token = this.eatOptional(tokenType);
+
+    if (!token) {
+      throw new Error(`Expected token "${tokenType}", but got "${this.currentToken!.type}"`);
+    } else {
+      return token;
+    }
+  }
+
+  private eatOptional(tokenType: TokenType): LexerToken | undefined {
     if (this.currentToken?.type === tokenType) {
       const token = this.currentToken;
       this.currentToken = this.lexer.getNextToken();
       return token;
     }
+  }
 
-    throw new Error(`Expected token "${tokenType}", but got "${this.currentToken!.type}"`);
+  private eatSome(tokenTypes: TokenType[]): LexerToken {
+    for (let tokenType of tokenTypes) {
+      const token = this.eatOptional(tokenType);
+
+      if (token) {
+        return token;
+      }
+    }
+
+    throw new Error(`Expected any of following tokens: "${tokenTypes.join(', ')}", but got "${this.currentToken!.type}"`);
   }
 
   StringLiteral() {

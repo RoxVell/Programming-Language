@@ -286,10 +286,33 @@ describe('Lexer', function () {
       testLexer(
         '{}',
         [
-          { type: TokenType.OpenBracket, value: '{' },
-          { type: TokenType.CloseBracket, value: '}' },
+          {type: TokenType.OpenBracket, value: '{'},
+          {type: TokenType.CloseBracket, value: '}'},
         ]
       );
+    });
+  });
+
+  describe('Identifiers', () => {
+    it('should parse identifiers correctly', () => {
+      testLexer(`a b _abc __qwe`, [
+        {type: TokenType.Identifier, value: 'a'},
+        {type: TokenType.Identifier, value: 'b'},
+        {type: TokenType.Identifier, value: '_abc'},
+        {type: TokenType.Identifier, value: '__qwe'},
+      ]);
+    });
+  });
+
+  describe('Variable Declaration', () => {
+    it('should parse variable declaration sequence correctly', () => {
+      testLexer('let a = 5;', [
+        {type: TokenType.LetKeyword, value: 'let'},
+        {type: TokenType.Identifier, value: 'a'},
+        {type: TokenType.Equal, value: '='},
+        {type: TokenType.Number, value: '5'},
+        {type: TokenType.Semicolon, value: ';'},
+      ])
     });
   });
 });

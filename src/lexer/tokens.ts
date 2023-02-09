@@ -1,4 +1,4 @@
-import {TokenType} from './token-type';
+import { TokenType } from './token-type';
 
 export type TokenDictionary = [RegExp, TokenType, boolean?][];
 
@@ -16,6 +16,8 @@ export const TOKENS: TokenDictionary = [
   [/^&&/, TokenType.OpLogicalAnd],
   [/^\|\|/, TokenType.OpLogicalOr],
   [/^%/, TokenType.OpRemainder],
+
+  [/^=/, TokenType.Equal],
 
   [/^'[^']*'/, TokenType.String],
   [/^"[^"]*"/, TokenType.String],
@@ -36,4 +38,8 @@ export const TOKENS: TokenDictionary = [
   [/^else/, TokenType.ElseKeyword],
   [/^while/, TokenType.WhileKeyword],
   [/^do/, TokenType.DoKeyword],
+  [/^let/, TokenType.LetKeyword],
+  [/^const/, TokenType.ConstKeyword],
+
+  [/^[_A-z][A-z\d]*/, TokenType.Identifier],
 ];
