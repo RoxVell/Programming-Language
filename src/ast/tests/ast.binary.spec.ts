@@ -217,5 +217,18 @@ describe('Binary Ast Expressions', function () {
       value: 2
     }
   });
+
+  itAstExpression('a = 5;', {
+    type: AstNodeType.Assignment,
+    id: {
+      type: AstNodeType.Identifier,
+      name: 'a'
+    },
+    kind: '=',
+    init: {
+      type: AstNodeType.NumberLiteral,
+      value: 5,
+    },
+  })
 });
 

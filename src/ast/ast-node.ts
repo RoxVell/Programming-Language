@@ -9,6 +9,9 @@ export enum AstNodeType {
   IfStatement = 'IfStatement',
   WhileStatement = 'WhileStatement',
   DoWhileStatement = 'DoWhileStatement',
+  VariableDeclaration = 'VariableDeclaration',
+  Identifier = 'Identifier',
+  Assignment = 'Assignment',
 }
 
 export interface AstNodeBuilder<T extends AstNodeType> {
@@ -22,6 +25,31 @@ export interface IfStatementNode {
   condition: AstNode;
   then: AstNode;
   else: AstNode | null;
+}
+
+const VARIABLE_DECLARATION_KIND = ['let', 'const'] as const;
+
+export interface VariableDeclarationNode {
+  type: AstNodeType.VariableDeclaration,
+  kind: typeof VARIABLE_DECLARATION_KIND[number],
+  id: IdentifierNode;
+  init: AstNode | null;
+}
+
+export const ASSIGNMENT_KINDS = ['=', '+=', '-=', '*=', '/=', '**=', '%=', '<<=', '>>=', '>>>=', '&=', '^=', '|=', '&&=', '||=', '??='] as const;
+
+type AssignmentKind = typeof ASSIGNMENT_KINDS[number];
+
+export interface AssignmentNode {
+  type: AstNodeType.Assignment,
+  kind: AssignmentKind,
+  init: AstNode,
+  id: IdentifierNode,
+}
+
+export interface IdentifierNode {
+  type: AstNodeType.Identifier,
+  name: string;
 }
 
 export interface WhileStatementNode {

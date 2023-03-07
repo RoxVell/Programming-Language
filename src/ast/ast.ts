@@ -1,6 +1,7 @@
-import {Lexer, LexerToken} from '../lexer/lexer';
-import {TOKENS} from '../lexer/tokens';
+import { Lexer, LexerToken } from '../lexer/lexer';
+import { TOKENS } from '../lexer/tokens';
 import {
+  AssignmentNode,
   AstNode,
   AstNodeType,
   AstTree,
@@ -8,10 +9,12 @@ import {
   BlockStatementNode,
   BooleanLiteralNode,
   DoWhileStatementNode,
+  IdentifierNode,
   IfStatementNode,
+  VariableDeclarationNode,
   WhileStatementNode
 } from './ast-node';
-import {TokenType} from '../lexer/token-type';
+import { TokenType } from '../lexer/token-type';
 
 export class Ast {
   private currentToken: LexerToken | null = null;
@@ -48,9 +51,36 @@ export class Ast {
         return this.WhileStatement();
       case TokenType.DoKeyword:
         return this.DoWhileStatement();
+      case TokenType.LetKeyword:
+      case TokenType.ConstKeyword:
+        return this.VariableDeclaration();
     }
 
     return this.ExpressionStatement();
+  }
+
+  VariableDeclaration(): VariableDeclarationNode {
+    const variableKind = this.eatSome([TokenType.LetKeyword, TokenType.ConstKeyword]);
+    const id = this.Identifier();
+    const assignmentOp = this.eatOptional(TokenType.Assignment);
+    const init = assignmentOp ? this.Expression() : null;
+    this.eat(TokenType.Semicolon);
+
+    return {
+      type: AstNodeType.VariableDeclaration,
+      id: id,
+      kind: variableKind.value as VariableDeclarationNode['kind'],
+      init: init
+    };
+  }
+
+  Identifier(): IdentifierNode {
+    const id = this.eat(TokenType.Identifier);
+
+    return {
+      type: AstNodeType.Identifier,
+      name: id.value
+    };
   }
 
   DoWhileStatement(): DoWhileStatementNode {
@@ -98,7 +128,32 @@ export class Ast {
   }
 
   Expression() {
-    return this.LogicalOrExpression();
+    return this.Assignment();
+  }
+
+  Assignment(): AstNode {
+    const left = this.LogicalOrExpression();
+
+    if (this.currentToken?.type === TokenType.Assignment) {
+      if (left.type !== AstNodeType.Identifier) {
+        throw new Error('Invalid left-hand side in assignment');
+      }
+
+      const assignmentKind = this.eat(TokenType.Assignment);
+
+      const init = this.Expression();
+
+      this.eat(TokenType.Semicolon);
+
+      return {
+        type: AstNodeType.Assignment,
+        id: left,
+        init: init,
+        kind: assignmentKind.value,
+      } as AssignmentNode;
+    }
+
+    return left;
   }
 
   LogicalOrExpression() {
@@ -135,6 +190,8 @@ export class Ast {
         return this.StringLiteral();
       case TokenType.OpenParenthesis:
         return this.ParenthesisExpression();
+      case TokenType.Identifier:
+        return this.Identifier();
     }
 
     throw new Error(`Unexpected token found "${this.currentToken!.type}"`);
@@ -148,13 +205,33 @@ export class Ast {
   }
 
   private eat(tokenType: TokenType): LexerToken {
+    const token = this.eatOptional(tokenType);
+
+    if (!token) {
+      throw new Error(`Expected token "${tokenType}", but got "${this.currentToken!.type}"`);
+    } else {
+      return token;
+    }
+  }
+
+  private eatOptional(tokenType: TokenType): LexerToken | undefined {
     if (this.currentToken?.type === tokenType) {
       const token = this.currentToken;
       this.currentToken = this.lexer.getNextToken();
       return token;
     }
+  }
 
-    throw new Error(`Expected token "${tokenType}", but got "${this.currentToken!.type}"`);
+  private eatSome(tokenTypes: TokenType[]): LexerToken {
+    for (let tokenType of tokenTypes) {
+      const token = this.eatOptional(tokenType);
+
+      if (token) {
+        return token;
+      }
+    }
+
+    throw new Error(`Expected any of following tokens: "${tokenTypes.join(', ')}", but got "${this.currentToken!.type}"`);
   }
 
   StringLiteral() {

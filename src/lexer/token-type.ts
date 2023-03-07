@@ -19,6 +19,8 @@ export enum TokenType {
 
   Semicolon = 'Semicolon',
 
+  Assignment = 'Assignment',
+
   Whitespaces = 'Whitespaces',
   Comment = 'Comment',
   // Keywords
@@ -26,4 +28,8 @@ export enum TokenType {
   ElseKeyword = 'ElseKeyword',
   WhileKeyword = 'WhileKeyword',
   DoKeyword = 'DoKeyword',
+  LetKeyword = 'LetKeyword',
+  ConstKeyword = 'ConstKeyword',
+
+  Identifier = 'Identifier',
 }

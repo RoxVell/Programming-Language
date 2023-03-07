@@ -1,5 +1,5 @@
-import {itAstExpression} from "../ast-test-utils";
-import {AstNodeType} from "../../ast-node";
+import { itAstExpression } from "../ast-test-utils";
+import { AstNodeType } from "../../ast-node";
 
 describe('While Statement', () => {
   itAstExpression('while (true) {}', {

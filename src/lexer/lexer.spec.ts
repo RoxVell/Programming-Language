@@ -1,6 +1,7 @@
 import { Lexer, LexerToken } from './lexer';
 import { TOKENS } from './tokens';
 import { TokenType } from './token-type';
+import { ASSIGNMENT_KINDS } from '../ast/ast-node';
 
 function testLexer(code: string, tokens: LexerToken[]) {
   const lexer = new Lexer(code, TOKENS);
@@ -286,10 +287,52 @@ describe('Lexer', function () {
       testLexer(
         '{}',
         [
-          { type: TokenType.OpenBracket, value: '{' },
-          { type: TokenType.CloseBracket, value: '}' },
+          {type: TokenType.OpenBracket, value: '{'},
+          {type: TokenType.CloseBracket, value: '}'},
         ]
       );
+    });
+  });
+
+  describe('Identifiers', () => {
+    it('should parse identifiers correctly', () => {
+      testLexer(`a b _abc __qwe`, [
+        {type: TokenType.Identifier, value: 'a'},
+        {type: TokenType.Identifier, value: 'b'},
+        {type: TokenType.Identifier, value: '_abc'},
+        {type: TokenType.Identifier, value: '__qwe'},
+      ]);
+    });
+  });
+
+  describe('Variable Declaration', () => {
+    it('should parse variable declaration sequence correctly', () => {
+      testLexer('let a = 5;', [
+        { type: TokenType.LetKeyword, value: 'let' },
+        { type: TokenType.Identifier, value: 'a' },
+        { type: TokenType.Assignment, value: '=' },
+        { type: TokenType.Number, value: '5' },
+        { type: TokenType.Semicolon, value: ';' },
+      ])
+    });
+
+    it('should parse variable declaration sequence correctly', () => {
+      testLexer('const _privateVariable = 5;', [
+        { type: TokenType.ConstKeyword, value: 'const' },
+        { type: TokenType.Identifier, value: '_privateVariable' },
+        { type: TokenType.Assignment, value: '=' },
+        { type: TokenType.Number, value: '5' },
+        { type: TokenType.Semicolon, value: ';' },
+      ]);
+    });
+  });
+
+  describe('Assignment', () => {
+    it('should parse all assignments correctly', () => {
+      testLexer(ASSIGNMENT_KINDS.join(' '), ASSIGNMENT_KINDS.map(assignmentKind => ({
+        type: TokenType.Assignment,
+        value: assignmentKind
+      })));
     });
   });
 });
