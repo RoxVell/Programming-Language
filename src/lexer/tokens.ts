@@ -1,6 +1,16 @@
 import { TokenType } from './token-type';
+import { ASSIGNMENT_KINDS } from '../ast/ast-node';
 
 export type TokenDictionary = [RegExp, TokenType, boolean?][];
+
+function escapeRegexpString(text: string): string {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
+function getOptionsRegexp(options: readonly string[]): RegExp {
+  const strOptions = options.map(option => escapeRegexpString(option));
+  return new RegExp(`^(${strOptions.join('|')})`);
+}
 
 export const TOKENS: TokenDictionary = [
   [/^\d+/, TokenType.Number],
@@ -8,16 +18,15 @@ export const TOKENS: TokenDictionary = [
   [/^(\/\/.+)/, TokenType.Comment, true],
   [/^\/\*[\S\s]*\*\//, TokenType.Comment, true],
 
-  [/^\*\*/, TokenType.OpExponentiation],
+  [getOptionsRegexp(ASSIGNMENT_KINDS), TokenType.Assignment],
 
+  [/^\*\*/, TokenType.OpExponentiation],
   [/^([<>])=?/, TokenType.OpComparison],
   [/^([+\-])/, TokenType.OpAdditive],
   [/^([*\/])/, TokenType.OpFactor],
   [/^&&/, TokenType.OpLogicalAnd],
   [/^\|\|/, TokenType.OpLogicalOr],
   [/^%/, TokenType.OpRemainder],
-
-  [/^=/, TokenType.Equal],
 
   [/^'[^']*'/, TokenType.String],
   [/^"[^"]*"/, TokenType.String],

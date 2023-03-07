@@ -41,7 +41,6 @@ export class Lexer {
       const result = stringToSearch.match(regexp);
 
       if (result) {
-        // console.log(result)
         this.lastPosition += result[0].length;
 
         if (isIgnore) {

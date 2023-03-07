@@ -9,6 +9,11 @@ function testExpressionResult(code: string, result: any) {
   it(`should evaluate expression "${code}" correctly`, () => testInterpreter(code, result));
 }
 
+function shouldThrowError(code: string, errorMessage: string) {
+  const interpreter = new Interpreter();
+  expect(() => interpreter.evaluate(code)).toThrow(errorMessage);
+}
+
 describe('Interpreter', function () {
   describe('Math operations', function () {
     it('should evaluate expression "3 + 2 * 5 ** 2" correctly', () => {
@@ -56,5 +61,30 @@ describe('Interpreter', function () {
     testExpressionResult('true || true', true);
     testExpressionResult('true || true && false', true);
     testExpressionResult('false || true && false', false);
+  });
+
+  describe('Variables', () => {
+    testExpressionResult('let a; a;', undefined);
+    testExpressionResult('let a; a = 5; a;', 5);
+    testExpressionResult('let a = 5; a;', 5);
+    testExpressionResult('let a = 5; let b = a + 1; b;', 6);
+    testExpressionResult('let a = 5; a *= 6; a;', 30);
+    testExpressionResult('let a = 10; a /= 2; a;', 5);
+
+    it('should not find a variable that belongs to a different scope', () => {
+      shouldThrowError(`{ let a = 5; } a;`, `Property with name "a" not found`);
+    });
+
+    it('should find a variable that belongs to a parent scope', () => {
+      testInterpreter(`let b; { let a = 5; { b = a; } } b;`, 5);
+    });
+
+    it('should not allow to reassign the constant variable', () => {
+      shouldThrowError(`const a = 5; a = 10; a;`, `Assignment to constant variable`);
+    });
+  });
+
+  describe('If', () => {
+    testExpressionResult('let a; if (false) { a = false; } else { a = true; } a;', true);
   });
 });

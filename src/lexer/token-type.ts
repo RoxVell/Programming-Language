@@ -19,7 +19,7 @@ export enum TokenType {
 
   Semicolon = 'Semicolon',
 
-  Equal = 'Equal',
+  Assignment = 'Assignment',
 
   Whitespaces = 'Whitespaces',
   Comment = 'Comment',

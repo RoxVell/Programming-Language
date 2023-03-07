@@ -1,6 +1,7 @@
 import { Lexer, LexerToken } from '../lexer/lexer';
 import { TOKENS } from '../lexer/tokens';
 import {
+  AssignmentNode,
   AstNode,
   AstNodeType,
   AstTree,
@@ -61,8 +62,8 @@ export class Ast {
   VariableDeclaration(): VariableDeclarationNode {
     const variableKind = this.eatSome([TokenType.LetKeyword, TokenType.ConstKeyword]);
     const id = this.Identifier();
-    this.eat(TokenType.Equal);
-    const init = this.Expression();
+    const assignmentOp = this.eatOptional(TokenType.Assignment);
+    const init = assignmentOp ? this.Expression() : null;
     this.eat(TokenType.Semicolon);
 
     return {
@@ -127,7 +128,32 @@ export class Ast {
   }
 
   Expression() {
-    return this.LogicalOrExpression();
+    return this.Assignment();
+  }
+
+  Assignment(): AstNode {
+    const left = this.LogicalOrExpression();
+
+    if (this.currentToken?.type === TokenType.Assignment) {
+      if (left.type !== AstNodeType.Identifier) {
+        throw new Error('Invalid left-hand side in assignment');
+      }
+
+      const assignmentKind = this.eat(TokenType.Assignment);
+
+      const init = this.Expression();
+
+      this.eat(TokenType.Semicolon);
+
+      return {
+        type: AstNodeType.Assignment,
+        id: left,
+        init: init,
+        kind: assignmentKind.value,
+      } as AssignmentNode;
+    }
+
+    return left;
   }
 
   LogicalOrExpression() {
@@ -164,6 +190,8 @@ export class Ast {
         return this.StringLiteral();
       case TokenType.OpenParenthesis:
         return this.ParenthesisExpression();
+      case TokenType.Identifier:
+        return this.Identifier();
     }
 
     throw new Error(`Unexpected token found "${this.currentToken!.type}"`);

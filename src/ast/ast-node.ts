@@ -11,6 +11,7 @@ export enum AstNodeType {
   DoWhileStatement = 'DoWhileStatement',
   VariableDeclaration = 'VariableDeclaration',
   Identifier = 'Identifier',
+  Assignment = 'Assignment',
 }
 
 export interface AstNodeBuilder<T extends AstNodeType> {
@@ -32,7 +33,18 @@ export interface VariableDeclarationNode {
   type: AstNodeType.VariableDeclaration,
   kind: typeof VARIABLE_DECLARATION_KIND[number],
   id: IdentifierNode;
-  init: AstNode;
+  init: AstNode | null;
+}
+
+export const ASSIGNMENT_KINDS = ['=', '+=', '-=', '*=', '/=', '**=', '%=', '<<=', '>>=', '>>>=', '&=', '^=', '|=', '&&=', '||=', '??='] as const;
+
+type AssignmentKind = typeof ASSIGNMENT_KINDS[number];
+
+export interface AssignmentNode {
+  type: AstNodeType.Assignment,
+  kind: AssignmentKind,
+  init: AstNode,
+  id: IdentifierNode,
 }
 
 export interface IdentifierNode {
