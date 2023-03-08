@@ -325,6 +325,16 @@ describe('Lexer', function () {
         { type: TokenType.Semicolon, value: ';' },
       ]);
     });
+
+    it('should parse variable declaration with name "if_something"', () => {
+      testLexer('const if_something = 5;', [
+        { type: TokenType.ConstKeyword, value: 'const' },
+        { type: TokenType.Identifier, value: 'if_something' },
+        { type: TokenType.Assignment, value: '=' },
+        { type: TokenType.Number, value: '5' },
+        { type: TokenType.Semicolon, value: ';' },
+      ]);
+    });
   });
 
   describe('Assignment', () => {
@@ -333,6 +343,22 @@ describe('Lexer', function () {
         type: TokenType.Assignment,
         value: assignmentKind
       })));
+    });
+  });
+
+  describe('Functions', () => {
+    it.only('should parse function declaration', () => {
+      testLexer('fn add(n1, n2) {}', [
+        { type: TokenType.Fn, value: 'fn' },
+        { type: TokenType.Identifier, value: 'add' },
+        { type: TokenType.OpenParenthesis, value: '(' },
+        { type: TokenType.Identifier, value: 'n1' },
+        { type: TokenType.Comma, value: ',' },
+        { type: TokenType.Identifier, value: 'n2' },
+        { type: TokenType.CloseParenthesis, value: ')' },
+        { type: TokenType.OpenBracket, value: '{' },
+        { type: TokenType.CloseBracket, value: '}' },
+      ]);
     });
   });
 });

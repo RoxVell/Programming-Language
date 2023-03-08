@@ -8,9 +8,14 @@ import {
   BinaryExpression,
   BlockStatementNode,
   BooleanLiteralNode,
+  CallExpressionNode,
   DoWhileStatementNode,
+  FunctionDeclarationNode,
+  FunctionParamDefaultValue,
+  FunctionParamNode,
   IdentifierNode,
   IfStatementNode,
+  ReturnStatementNode,
   VariableDeclarationNode,
   WhileStatementNode
 } from './ast-node';
@@ -54,6 +59,10 @@ export class Ast {
       case TokenType.LetKeyword:
       case TokenType.ConstKeyword:
         return this.VariableDeclaration();
+      case TokenType.Fn:
+        return this.FunctionDeclaration();
+      case TokenType.Return:
+        return this.ReturnStatement();
     }
 
     return this.ExpressionStatement();
@@ -87,7 +96,7 @@ export class Ast {
     this.eat(TokenType.DoKeyword);
     const body = this.Statement();
     this.eat(TokenType.WhileKeyword);
-    const condition = this.InsideParentheses();
+    const condition = this.InsideParentheses(this.Expression.bind(this));
     return {
       type: AstNodeType.DoWhileStatement,
       condition,
@@ -97,7 +106,7 @@ export class Ast {
 
   WhileStatement(): WhileStatementNode {
     this.eat(TokenType.WhileKeyword);
-    const condition = this.InsideParentheses();
+    const condition = this.InsideParentheses(this.Expression.bind(this));
     const body = this.Statement();
     return {
       type: AstNodeType.WhileStatement,
@@ -120,9 +129,7 @@ export class Ast {
   ExpressionStatement() {
     const expression = this.Expression();
 
-    if (this.currentToken?.type === TokenType.Semicolon) {
-      this.eat(TokenType.Semicolon);
-    }
+    this.eatOptional(TokenType.Semicolon);
 
     return expression;
   }
@@ -177,7 +184,41 @@ export class Ast {
   }
 
   ExponentialExpression() {
-    return this.BinaryExpression('PrimaryExpression', [TokenType.OpExponentiation]);
+    return this.BinaryExpression('CallExpression', [TokenType.OpExponentiation]);
+  }
+
+  CallExpression() {
+    let left = this.PrimaryExpression();
+
+    // FIXME: complete lhs possible expressions
+    while (this.currentToken?.type === TokenType.OpenParenthesis) {
+      if (left.type === AstNodeType.Identifier || left.type === AstNodeType.CallExpression) {
+        this.eat(TokenType.OpenParenthesis);
+
+        const args: AstNode[] = [];
+
+        let isFirst = true;
+
+        // @ts-ignore
+        while (this.currentToken?.type !== TokenType.CloseParenthesis) {
+          if (!isFirst) {
+            this.eat(TokenType.Comma);
+          }
+          args.push(this.Expression());
+          isFirst = false;
+        }
+
+        this.eat(TokenType.CloseParenthesis);
+
+        left = {
+          type: AstNodeType.CallExpression,
+          callee: left,
+          arguments: args,
+        } as CallExpressionNode;
+      }
+    }
+
+    return left;
   }
 
   PrimaryExpression() {
@@ -283,16 +324,16 @@ export class Ast {
     return left;
   }
 
-  private InsideParentheses() {
+  private InsideParentheses<T>(fn: (...args: unknown[]) => T): T {
     this.eat(TokenType.OpenParenthesis);
-    const expression = this.Expression();
+    const expression = fn();
     this.eat(TokenType.CloseParenthesis);
     return expression;
   }
 
   private IfStatement(): IfStatementNode {
     this.eat(TokenType.IfKeyword);
-    const condition = this.InsideParentheses();
+    const condition = this.InsideParentheses(this.Expression.bind(this));
     const thenStatement = this.Statement();
 
     let elseStatement = null;
@@ -307,6 +348,77 @@ export class Ast {
       condition,
       then: thenStatement,
       else: elseStatement
+    };
+  }
+
+  private FunctionParam(): FunctionParamNode {
+    const id = this.Identifier();
+
+    if (this.currentToken?.type === TokenType.Assignment) {
+      this.eat(TokenType.Assignment);
+
+      const rhs = this.Expression() as FunctionParamDefaultValue;
+
+      const ALLOWED_FUNCTION_PARAM_TYPE: AstNodeType[] = [AstNodeType.StringLiteral, AstNodeType.NumberLiteral, AstNodeType.BooleanLiteral, AstNodeType.Identifier];
+
+      if (!ALLOWED_FUNCTION_PARAM_TYPE.includes(rhs.type)) {
+        throw new Error(`Unexpected default value for function parameter, but got: ${rhs.type}`);
+      }
+
+      return {
+        type: AstNodeType.FunctionParam,
+        name: id.name,
+        hasDefaultValue: true,
+        defaultValue: rhs
+      };
+    }
+
+    return {
+      type: AstNodeType.FunctionParam,
+      name: id.name,
+      hasDefaultValue: false,
+    };
+  }
+
+  private FunctionParams(): FunctionParamNode[] {
+    const params: FunctionParamNode[] = [];
+    let isFirst = true;
+
+    while (this.currentToken && this.currentToken.type !== TokenType.CloseParenthesis) {
+      if (!isFirst) {
+        this.eat(TokenType.Comma);
+      }
+
+      isFirst = false;
+
+      params.push(this.FunctionParam());
+    }
+
+    return params;
+  }
+
+  // 'fn' function_name '(' ARGS ')' BlockStatement
+  private FunctionDeclaration(): FunctionDeclarationNode {
+    this.eat(TokenType.Fn);
+    const id = this.Identifier();
+    const params = this.InsideParentheses(this.FunctionParams.bind(this));
+    const body = this.BlockStatement();
+    return {
+      type: AstNodeType.FunctionDeclaration,
+      name: id,
+      params,
+      body
+    };
+  }
+
+  private ReturnStatement(): ReturnStatementNode {
+    this.eat(TokenType.Return);
+    const expression = this.Expression();
+    this.eat(TokenType.Semicolon);
+
+    return {
+      type: AstNodeType.ReturnStatement,
+      expression,
     };
   }
 }

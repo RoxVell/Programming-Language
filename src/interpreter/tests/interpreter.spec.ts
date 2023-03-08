@@ -87,4 +87,21 @@ describe('Interpreter', function () {
   describe('If', () => {
     testExpressionResult('let a; if (false) { a = false; } else { a = true; } a;', true);
   });
+
+  describe('Function', () => {
+    testExpressionResult('fn returnFive() { return 5; } returnFive();', 5);
+
+    testExpressionResult('fn add(n1, n2) { return n1 + n2; } add(1, 2);', 3);
+    testExpressionResult('fn add(n1, n2) { return n1 + n2; } add(1, 2) + add(5, 6);', 14);
+    testExpressionResult('fn add(n1, n2 = 10) { return n1 + n2; } add(5);', 15);
+    testExpressionResult(`
+      fn anotherFn() { return 15; }
+    
+      fn add(n1, n2 = 10) {
+        return n1 + n2 + anotherFn();
+      }
+          
+      add(5) + anotherFn();
+    `, 45);
+  });
 });
