@@ -18,8 +18,13 @@ export enum TokenType {
   CloseBracket = 'CloseBracket',
 
   Semicolon = 'Semicolon',
+  Comma = 'Comma',
+  Equal = 'Equal',
+  EqualEqual = 'EqualEqual',
 
   Assignment = 'Assignment',
+
+  Identifier = 'Identifier',
 
   Whitespaces = 'Whitespaces',
   Comment = 'Comment',
@@ -30,6 +35,6 @@ export enum TokenType {
   DoKeyword = 'DoKeyword',
   LetKeyword = 'LetKeyword',
   ConstKeyword = 'ConstKeyword',
-
-  Identifier = 'Identifier',
+  Fn = 'Fn',
+  Return = 'Return',
 }

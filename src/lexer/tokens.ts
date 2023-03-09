@@ -40,8 +40,12 @@ export const TOKENS: TokenDictionary = [
   [/^}/, TokenType.CloseBracket],
 
   [/^;/, TokenType.Semicolon],
+  [/^,/, TokenType.Comma],
 
   [/^\s+/, TokenType.Whitespaces, true],
+
+  [/^==/, TokenType.EqualEqual],
+  [/^=/, TokenType.Equal],
 
   [/^if/, TokenType.IfKeyword],
   [/^else/, TokenType.ElseKeyword],
@@ -49,6 +53,8 @@ export const TOKENS: TokenDictionary = [
   [/^do/, TokenType.DoKeyword],
   [/^let/, TokenType.LetKeyword],
   [/^const/, TokenType.ConstKeyword],
+  [/^fn/, TokenType.Fn],
+  [/^return\b/, TokenType.Return],
 
   [/^[_A-z][A-z\d]*/, TokenType.Identifier],
 ];

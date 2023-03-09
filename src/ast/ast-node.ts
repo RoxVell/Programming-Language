@@ -10,8 +10,12 @@ export enum AstNodeType {
   WhileStatement = 'WhileStatement',
   DoWhileStatement = 'DoWhileStatement',
   VariableDeclaration = 'VariableDeclaration',
+  FunctionDeclaration = 'FunctionDeclaration',
+  FunctionParam = 'FunctionParam',
+  CallExpression = 'CallExpression',
+  ReturnStatement = 'ReturnStatement',
   Identifier = 'Identifier',
-  Assignment = 'Assignment',
+  Assignment = 'Assignment'
 }
 
 export interface AstNodeBuilder<T extends AstNodeType> {
@@ -20,11 +24,41 @@ export interface AstNodeBuilder<T extends AstNodeType> {
 
 export type AstNode = AstNodeBuilder<AstNodeType>;
 
+export type FunctionParamDefaultValue = StringLiteralNode | NumberLiteralNode | BooleanLiteralNode;
+
+export type FunctionParamNode = {
+  type: AstNodeType.FunctionParam,
+  name: string;
+} & ({
+  hasDefaultValue: false;
+} | {
+  hasDefaultValue: true;
+  defaultValue: FunctionParamDefaultValue;
+});
+
+export interface FunctionDeclarationNode {
+  type: AstNodeType.FunctionDeclaration,
+  name: IdentifierNode,
+  params: FunctionParamNode[],
+  body: BlockStatementNode,
+}
+
+export interface ReturnStatementNode {
+  type: AstNodeType.ReturnStatement,
+  expression: AstNode;
+}
+
 export interface IfStatementNode {
   type: AstNodeType.IfStatement,
   condition: AstNode;
   then: AstNode;
   else: AstNode | null;
+}
+
+export interface CallExpressionNode {
+  type: AstNodeType.CallExpression,
+  callee: AstNode;
+  arguments: AstNode[];
 }
 
 const VARIABLE_DECLARATION_KIND = ['let', 'const'] as const;

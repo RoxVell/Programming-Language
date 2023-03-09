@@ -1,17 +1,18 @@
+export type Variable = {
+  type: 'Variable',
+  value: unknown;
+  isConst: boolean;
+};
+
 export class Scope {
-  private readonly variables = new Map<string, unknown>();
-  private readonly constants = new Map<string, unknown>();
+  private readonly variables = new Map<string, Variable>();
 
   constructor(private readonly parentScope: Scope | null = null) {
   }
 
-  getVariable(variableName: string): unknown {
+  getVariable(variableName: string): Variable {
     if (this.variables.has(variableName)) {
-      return this.variables.get(variableName);
-    }
-
-    if (this.constants.has(variableName)) {
-      return this.constants.get(variableName);
+      return this.variables.get(variableName)!;
     }
 
     if (this.parentScope) {
@@ -23,12 +24,15 @@ export class Scope {
 
   assignVariable(variableName: string, variableValue: unknown): void {
     if (this.variables.has(variableName)) {
-      this.variables.set(variableName, variableValue);
-      return;
-    }
+      const variable = this.getVariable(variableName);
 
-    if (this.constants.has(variableName)) {
-      throw new Error(`Assignment to constant variable`);
+      if (variable.isConst) {
+        throw new Error(`Assignment to constant variable`);
+      }
+
+      variable.value = variableValue;
+
+      return;
     }
 
     if (this.parentScope) {
@@ -38,19 +42,11 @@ export class Scope {
     throw new Error(`Variable with name "${variableName}" not found`);
   }
 
-  defineVariable(variableName: string, variableValue: unknown): void {
+  defineVariable(variableName: string, variableValue: unknown, isConst: boolean): void {
     if (this.variables.has(variableName)) {
       throw new Error(`Variable with name "${variableName}" already defined`);
     }
 
-    this.variables.set(variableName, variableValue);
-  }
-
-  defineConstant(variableName: string, variableValue: unknown) {
-    if (this.constants.has(variableName)) {
-      throw new Error(`Variable with name "${variableName}" already defined`);
-    }
-
-    this.constants.set(variableName, variableValue);
+    this.variables.set(variableName, { type: 'Variable', isConst, value: variableValue });
   }
 }

@@ -6,19 +6,20 @@ import {
   BinaryExpression,
   BlockStatementNode,
   BooleanLiteralNode,
+  CallExpressionNode,
   DoWhileStatementNode,
+  FunctionDeclarationNode,
   IdentifierNode,
   IfStatementNode,
   NumberLiteralNode,
+  ReturnStatementNode,
   StringLiteralNode,
   VariableDeclarationNode,
   WhileStatementNode
 } from '../ast/ast-node';
 import { BinaryOperator } from '../ast/ast-operators';
 import { Scope } from './scope';
-
-function exhaustiveCheck(param: never) {
-}
+import { Func } from './function';
 
 export class Interpreter {
   private currentScope = new Scope();
@@ -64,6 +65,15 @@ export class Interpreter {
 
       case AstNodeType.Assignment:
         return this.assignVariable(node as AssignmentNode);
+
+      case AstNodeType.FunctionDeclaration:
+        return this.declareFunction(node as FunctionDeclarationNode);
+
+      case AstNodeType.CallExpression:
+        return this.callFunction(node as CallExpressionNode);
+
+      case AstNodeType.ReturnStatement:
+        return this.doReturn(node as ReturnStatementNode);
     }
 
     throw new Error(`Unexpected node type "${node.type}"`);
@@ -130,23 +140,11 @@ export class Interpreter {
 
   private declareVariable(node: VariableDeclarationNode) {
     const variableValue = node.init !== null ? this.evalNode(node.init) : undefined;
-
-    switch (node.kind) {
-      case 'let':
-        this.currentScope.defineVariable(node.id.name, variableValue);
-        break;
-
-      case 'const':
-        this.currentScope.defineConstant(node.id.name, variableValue);
-        break;
-
-      default:
-        exhaustiveCheck(node.kind);
-    }
+    this.currentScope.defineVariable(node.id.name, variableValue, node.kind === 'const');
   }
 
   private getIdentifierValue(node: IdentifierNode) {
-    return this.currentScope.getVariable(node.name);
+    return this.currentScope.getVariable(node.name).value;
   }
 
   private assignVariable(node: AssignmentNode) {
@@ -234,5 +232,51 @@ export class Interpreter {
     }
 
     this.currentScope.assignVariable(node.id.name, initialValue);
+  }
+
+  private declareFunction(node: FunctionDeclarationNode) {
+    const func = new Func(node, this.currentScope);
+    this.currentScope.defineVariable(node.name.name, func, false);
+  }
+
+  private callFunction(node: CallExpressionNode) {
+    const callee = this.evalNode(node.callee);
+
+    if (callee instanceof Func) {
+      const executionScope = new Scope(callee.parentScope);
+
+      callee.node.params.forEach((fnParam, index) => {
+        const paramValue: AstNode | undefined = index > node.arguments.length - 1
+          ? fnParam.hasDefaultValue
+            ? fnParam.defaultValue
+            : undefined
+          : node.arguments[index];
+
+        executionScope.defineVariable(fnParam.name, paramValue === undefined ? undefined : this.evalNode(paramValue), false);
+      });
+
+      const previousScope = this.currentScope;
+      this.currentScope = executionScope;
+      const functionResultCall = this.evalFunctionBody(callee.node.body);
+      this.currentScope = previousScope;
+
+      return functionResultCall;
+    } else {
+      throw new Error(`Callee is not a function`);
+    }
+  }
+
+  private evalFunctionBody(node: BlockStatementNode) {
+    for (const statement of node.statements) {
+      if (statement.type === AstNodeType.ReturnStatement) {
+        return this.doReturn(statement as ReturnStatementNode);
+      }
+      this.evalNode(statement);
+    }
+  }
+
+
+  private doReturn(node: ReturnStatementNode) {
+    return this.evalNode(node.expression);
   }
 }
